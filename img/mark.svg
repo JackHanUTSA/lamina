@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110">
-  <polygon fill="#C8A94B" points="29,14 103,14 88,33 14,33"/>
-  <polygon fill="#ECEEF1" points="29,44 85,44 70,63 14,63"/>
-  <polygon fill="#ECEEF1" points="29,74 67,74 52,93 14,93"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110" width="110" height="110"><polygon points="29,14 103,14 88,33 14,33" fill="#D7FF2E"/><polygon points="29,44 85,44 70,63 14,63" fill="#ECEEF1"/><polygon points="29,74 67,74 52,93 14,93" fill="#ECEEF1"/></svg>

@@ -5,15 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LAMINA — Hand-laid carbon for sport bikes</title>
 <meta name="description" content="LAMINA makes hand-laid carbon composite parts for sport bikes. 2×2 twill, vacuum bagged, coded and traceable. Counted in plies.">
-<meta name="theme-color" content="#0A0B0D">
+<meta name="theme-color" content="#D7FF2E">
 <link rel="icon" href="img/favicon-32.png" sizes="32x32">
 <meta property="og:title" content="LAMINA — Counted in plies">
 <meta property="og:description" content="Hand-laid carbon composite for sport bikes. Small batch, fitted twice.">
 <meta property="og:image" content="img/tank-top.jpg">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="motion.css">
 </head>
 <body>
+<div class="progress" id="progress" aria-hidden="true"></div>
 
 <nav class="nav" id="nav">
   <a class="brand" href="#top">
@@ -45,12 +47,22 @@
         <a class="btn btn-ghost" href="#underside">Look underneath</a>
       </div>
     </div>
-    <div class="hero-img">
-      <img src="img/tank-top.jpg" alt="LAMINA carbon fibre tank cover in 2x2 twill with gloss finish" width="1100" height="1591">
+    <div class="hero-img par" data-par="-0.10">
+      <img class="rv" src="img/tank-top.jpg" alt="LAMINA carbon fibre tank cover in 2x2 twill with gloss finish" width="1100" height="1591">
+      <span class="sweep" aria-hidden="true"></span>
       <span class="hero-tag">LMN-R6-TNK-2T-G</span>
     </div>
   </div>
 </header>
+
+
+<!-- ───────────── TICKER ───────────── -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <span>2&times;2 TWILL <i>/</i> VACUUM BAGGED <i>/</i> FITTED TWICE <i>/</i> ARAMID FLANGE <i>/</i> HAND LAID <i>/</i> CODED &amp; TRACEABLE <i>/</i> NO SPLICE <i>/</i> SMALL BATCH <i>/</i></span>
+    <span>2&times;2 TWILL <i>/</i> VACUUM BAGGED <i>/</i> FITTED TWICE <i>/</i> ARAMID FLANGE <i>/</i> HAND LAID <i>/</i> CODED &amp; TRACEABLE <i>/</i> NO SPLICE <i>/</i> SMALL BATCH <i>/</i></span>
+  </div>
+</div>
 
 <!-- ───────────── SPEC STRIP ───────────── -->
 <section class="strip" style="padding-block:0">
@@ -62,10 +74,23 @@
   </dl>
 </section>
 
+
+<!-- ───────────── STATS ───────────── -->
+<section class="speed" style="padding-block:0">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat rv"><b><span class="n" data-count="3">0</span></b><span>Plies on the bias</span></div>
+      <div class="stat rv"><b><span class="n" data-count="2">0</span></b><span>Test fits per part</span></div>
+      <div class="stat rv"><b><span class="n" data-count="0">0</span></b><span>Centreline splices</span></div>
+      <div class="stat rv"><b><span class="n" data-count="100">0</span><span class="u">%</span></b><span>Hand laid</span></div>
+    </div>
+  </div>
+</section>
+
 <!-- ───────────── HONEST UNDERSIDE ───────────── -->
 <section id="underside">
   <div class="wrap">
-    <div class="sec-head rv">
+    <div class="sec-head rv" data-idx="01">
       <p class="eyebrow">What nobody photographs</p>
       <h2>Most brands only<br>show you the gloss.</h2>
       <p>
@@ -76,12 +101,12 @@
 
     <div class="split">
       <figure class="rv" style="margin:0">
-        <img src="img/tank-under.jpg" alt="Underside of the LAMINA tank cover showing the hand lay-up and aramid backing" loading="lazy">
+        <img class="rv" src="img/tank-under.jpg" alt="Underside of the LAMINA tank cover showing the hand lay-up and aramid backing" loading="lazy">
       </figure>
       <div class="rv">
         <ul class="claims">
           <li><span class="k">Lay-up</span><span class="v"><b>Hand wet lay-up, vacuum bagged.</b> Not autoclave prepreg, and we won't call it that. The exterior is clear-coated and polished; the interior is left as it came off the mould.</span></li>
-          <li><span class="k">Flange</span><span class="v"><b>Aramid-reinforced.</b> The gold you can see is the aramid layer taking bolt load and impact where the shell meets the frame.</span></li>
+          <li><span class="k">Flange</span><span class="v"><b class="material">Aramid-reinforced.</b> The gold you can see is the aramid layer taking bolt load and impact where the shell meets the frame.</span></li>
           <li><span class="k">Trim</span><span class="v"><b>Hand-trimmed, hand-finished.</b> Expect ply overlap and tool marks inside. Expect none of it on the show face.</span></li>
           <li><span class="k">Fit</span><span class="v"><b>Test-fitted twice</b> — once off the mould, once after clear-coat — on the actual model it's cut for.</span></li>
         </ul>
@@ -93,7 +118,7 @@
 <!-- ───────────── FILM ───────────── -->
 <section id="film">
   <div class="wrap">
-    <div class="sec-head rv">
+    <div class="sec-head rv" data-idx="02">
       <p class="eyebrow">Ten seconds</p>
       <h2>No riders. No smoke.<br>Just the part.</h2>
       <p>Shot on the actual shell — the gloss face, the aramid flange, the code. Nothing in this film is a render.</p>
@@ -129,7 +154,7 @@
 <!-- ───────────── PRODUCT ───────────── -->
 <section class="product" id="parts">
   <div class="wrap">
-    <div class="sec-head rv">
+    <div class="sec-head rv" data-idx="03">
       <p class="eyebrow">In production</p>
       <h2>Tank cover</h2>
     </div>
@@ -159,9 +184,9 @@
 </section>
 
 <!-- ───────────── PROCESS ───────────── -->
-<section id="process">
+<section id="process" class="speed">
   <div class="wrap">
-    <div class="sec-head rv">
+    <div class="sec-head rv" data-idx="04">
       <p class="eyebrow">How it's made</p>
       <h2>Four stages, no shortcuts between them.</h2>
     </div>
@@ -177,7 +202,7 @@
 <!-- ───────────── PART CODE ───────────── -->
 <section class="product" id="code">
   <div class="wrap">
-    <div class="sec-head rv">
+    <div class="sec-head rv" data-idx="05">
       <p class="eyebrow">Traceability</p>
       <h2>Every part says what it is.</h2>
       <p>The code is etched inside the flange, on the one surface that was always going to show the lay-up. Read it off the part and you know the fitment, the cloth and the finish.</p>
@@ -196,7 +221,7 @@
 </section>
 
 <!-- ───────────── CTA ───────────── -->
-<section class="cta" id="fitment">
+<section class="cta speed" id="fitment">
   <div class="wrap">
     <img src="img/mark-180.png" alt="" width="64" height="64" style="margin:0 auto;opacity:.9" class="rv">
     <h2 class="rv">Tell us what<br>you ride.</h2>
@@ -258,6 +283,69 @@
       setTimeout(function(){a.textContent='Request fitment'},1600);
     });
   });
+
+  /* ─────────── racing motion ───────────
+     One rAF loop drives scroll progress + parallax. Scroll listeners only
+     set a flag; all reads/writes happen in the frame, so nothing thrashes
+     layout. Entirely skipped when the user asks for reduced motion. */
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  var bar=document.getElementById('progress');
+  var pars=[].slice.call(document.querySelectorAll('.par'));
+  var ticking=false;
+
+  function frame(){
+    ticking=false;
+    var y=window.scrollY||0;
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    if(bar) bar.style.transform='scaleX('+(max>0?Math.min(y/max,1):0)+')';
+    if(!reduce){
+      for(var i=0;i<pars.length;i++){
+        var el=pars[i], r=el.getBoundingClientRect();
+        if(r.bottom<-200||r.top>window.innerHeight+200) continue;
+        var speed=parseFloat(el.getAttribute('data-par'))||-0.08;
+        var mid=r.top+r.height/2-window.innerHeight/2;
+        el.style.transform='translate3d(0,'+(mid*speed).toFixed(2)+'px,0)';
+      }
+    }
+  }
+  function onScrollRaf(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
+  addEventListener('scroll',onScrollRaf,{passive:true});
+  addEventListener('resize',onScrollRaf,{passive:true});
+  frame();
+
+  /* count-up stats, triggered once when they scroll into view.
+     The unit (%) is a SIBLING, never a child, so rewriting the number
+     can't destroy it. A timeout guarantees the final value even if rAF
+     stalls mid-animation - a counter frozen at 84 of 100 is a wrong fact
+     on the page, not just a missed animation. */
+  function countUp(el){
+    var target=parseInt(el.getAttribute('data-count'),10);
+    if(isNaN(target)) return;
+    var dur=1100;
+    if(reduce||target===0){ el.textContent=target; return; }
+    var t0=null;
+    function step(ts){
+      if(!t0) t0=ts;
+      var p=Math.min((ts-t0)/dur,1);
+      el.textContent=Math.round(target*(1-Math.pow(1-p,3)));
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+    setTimeout(function(){ el.textContent=target; }, dur+250);
+  }
+
+  var stats=[].slice.call(document.querySelectorAll('[data-count]'));
+  if('IntersectionObserver' in window && stats.length){
+    var so=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ countUp(e.target); so.unobserve(e.target); }
+      });
+    },{threshold:.5});
+    stats.forEach(function(s){ so.observe(s); });
+  }else{
+    stats.forEach(countUp);                      // no observer: just show the numbers
+  }
 })();
 </script>
 </body>
