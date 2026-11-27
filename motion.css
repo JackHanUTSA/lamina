@@ -184,6 +184,10 @@ body::after{
 
 
 /* ─────────── 3D exploded-view rig ─────────── */
+.rig__intro{padding-block:clamp(56px,8vw,112px) 24px;}
+.rig__intro h2{max-width:900px;text-wrap:balance;}
+.rig__intro p{max-width:52ch;color:var(--tow);font-size:clamp(17px,2vw,21px);line-height:1.5;}
+.rig__intro .rig__disclaimer{font-size:13px;color:var(--tow);}
 .rig{position:relative;height:auto;background:var(--carbon)}
 .rig--ready{height:420vh}
 .rig__sticky{

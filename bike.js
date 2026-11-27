@@ -189,7 +189,7 @@ function boot(){
       /* A fairing group also contains the things bolted THROUGH it. You cannot
          lay carbon over a windscreen, a lens, a mirror glass or a bulb socket,
          so these are excluded from the swap even inside a carbon assembly. */
-      const NO_CARBON = /windscreen|glaz|lens|lamp|bulb|socket|mirror|indicator|instrument|gauge|reflector|grip|saddle|seat pad|tyre|rubber|chrome trim/i;
+      const NO_CARBON = /windscreen|glaz|lens|lamp|bulb|socket|mirror|indicator|instrument|gauge|reflector|grip|saddle|seat pad|tyre|rubber|chrome trim|filler cap|mounting spine|subframe|support|strut|stay|fixing|bracket|bolt|clip/i;
       const carbonable = o => {
         const n=(o.name||'').replace(/_/g,' ');
         if(NO_CARBON.test(n)) return false;
@@ -332,8 +332,13 @@ function boot(){
     const vF=THREE.MathUtils.degToRad(camera.fov);
     const hF=2*Math.atan(Math.tan(vF/2)*camera.aspect);
     const dist=radius/Math.sin(Math.max(.12,Math.min(vF,hF)/2))*0.92;
-    if(tankGroup && tankGroup.userData.sr){
-      TANKPT.copy(tankGroup.userData.sc).add(tankGroup.position);
+    if(carbonMesh){
+      // Follow the actual shell through its hinge rotation, not the group's
+      // cached home centre. Compute the local centre once, then transform it.
+      if(!carbonMesh.geometry.boundingBox) carbonMesh.geometry.computeBoundingBox();
+      carbonMesh.geometry.boundingBox.getCenter(TANKPT);
+      carbonMesh.updateWorldMatrix(true, false);
+      carbonMesh.localToWorld(TANKPT);
     }
     const spin=(.52+p*1.08)*Math.PI*.5;
     const elev=THREE.MathUtils.lerp(.12,.30,push);
