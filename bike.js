@@ -14,6 +14,7 @@
    ═══════════════════════════════════════════════════════════════════════ */
 import * as THREE from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/GLTFLoader.js';
+import {RGBELoader} from './vendor/RGBELoader.js';
 import {HV, buildEnvironment, contactShadow, GROUPS} from './bike-model.js';
 
 const host = document.getElementById('rig');
@@ -45,15 +46,32 @@ function boot(){
 
   const scene  = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(32, 1, 0.01, 120);
+  /* The hand-built panel rig lights the scene on frame one so nothing waits
+     on a download. A real captured light probe (Poly Haven, CC0) then replaces
+     it: measured studio light is what makes clear coat read as clear coat. */
   const envMap = buildEnvironment(renderer);
   scene.environment = envMap;
 
-  scene.add(new THREE.HemisphereLight(0xaebfd4, 0x0d1013, .45));
-  const key = new THREE.DirectionalLight(0xffffff, 1.35); key.position.set(2.6,3.4,2.2); scene.add(key);
-  const rim = new THREE.DirectionalLight(HV, .45);         rim.position.set(-2.4,1.3,-2.6); scene.add(rim);
+  new RGBELoader().load('env/studio_1k.hdr', hdr=>{
+    hdr.mapping = THREE.EquirectangularReflectionMapping;
+    const pm = new THREE.PMREMGenerator(renderer);
+    const probe = pm.fromEquirectangular(hdr).texture;
+    pm.dispose(); hdr.dispose();
+    scene.environment = probe;
+    scene.environmentIntensity = 0.55;   // reflections yes, flat fill no
+    renderer.toneMappingExposure = 0.78;
+    dirty = true;
+    if(isPinned && ready){ apply(p0); renderer.render(scene,camera); }
+    host.dataset.probe = 'hdri';
+  }, undefined, ()=>{ host.dataset.probe = 'procedural'; });
 
-  /* Carbon needs relief, not just a picture of a weave: the normal map is
-     what makes the tows catch the environment and read as cloth under clear. */
+  scene.add(new THREE.HemisphereLight(0xaebfd4, 0x0d1013, .22));
+  const key = new THREE.DirectionalLight(0xffffff, 0.95); key.position.set(2.6,3.4,2.2); scene.add(key);
+  const rim = new THREE.DirectionalLight(HV, .20);         rim.position.set(-2.4,1.3,-2.6); scene.add(rim);
+
+  /* Scanned CC0 carbon weave (ambientCG Fabric004) rather than a tile drawn
+     by hand: my generated version alternated horizontal and vertical floats,
+     which reads as herringbone, and sat far too light to pass as carbon. */
   const TL = new THREE.TextureLoader();
   const REP = new THREE.Vector2(1, 1);   // scale comes from the projected UVs
   function tex(url, srgb){
@@ -67,33 +85,37 @@ function boot(){
   /* The GLB's UVs are degenerate for our purposes (V is constant across
      most vertices), so a weave mapped through them smears into nothing.
      Box-project fresh UVs from world position instead, at a real tow pitch. */
-  const TOW_TILE = 0.052;          // metres covered by one 8-tow tile ~= 6.5mm pitch
-  function boxProjectUV(srcGeo, tile){
+  const TOW_TILE = 0.032;          // metres per tile; ~4mm tows, real 3K cloth
+  function wrapUV(srcGeo, tile){
+    /* Box projection picks its plane per-VERTEX, so across a curved shell the
+       axis flips and the weave mirrors into chevrons. Cloth does not do that.
+       Wrap cylindrically about the bike's long axis instead - the way a real
+       layup follows the mould - which keeps every tow running one direction. */
     const geo = srcGeo.clone();
+    geo.computeBoundingBox();
+    const bb = geo.boundingBox;
+    const cy = (bb.min.y+bb.max.y)/2, cz = (bb.min.z+bb.max.z)/2;
+    const rad = ((bb.max.y-bb.min.y) + (bb.max.z-bb.min.z)) / 4 || 0.1;
     const pos = geo.attributes.position;
-    const nor = geo.attributes.normal;
     const uv  = new Float32Array(pos.count*2);
     for(let i=0;i<pos.count;i++){
       const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i);
-      const nx=Math.abs(nor?nor.getX(i):0), ny=Math.abs(nor?nor.getY(i):1), nz=Math.abs(nor?nor.getZ(i):0);
-      let u,v;
-      if(nx>=ny && nx>=nz){ u=z; v=y; }        // facing X -> project ZY
-      else if(ny>=nx && ny>=nz){ u=x; v=z; }   // facing Y -> project XZ
-      else { u=x; v=y; }                       // facing Z -> project XY
-      uv[i*2]=u/tile; uv[i*2+1]=v/tile;
+      const ang = Math.atan2(z-cz, y-cy);
+      uv[i*2]   = x/tile;
+      uv[i*2+1] = ang*rad/tile;
     }
     geo.setAttribute('uv', new THREE.BufferAttribute(uv,2));
     return geo;
   }
 
   const carbonMat = new THREE.MeshPhysicalMaterial({
-    map:          tex('img/twill-color.png', true),
-    normalMap:    tex('img/twill-normal.png', false),
-    roughnessMap: tex('img/twill-rough.png', false),
+    map:          tex('img/cf-color.jpg', true),
+    normalMap:    tex('img/cf-normal.jpg', false),
+    roughnessMap: tex('img/cf-rough.jpg', false),
     normalScale:  new THREE.Vector2(1.15, 1.15),
-    color:0xffffff, metalness:.28, roughness:1.0,
-    clearcoat:1, clearcoatRoughness:.035,
-    transparent:true, opacity:0, envMap, envMapIntensity:1.25
+    color:0xffffff, metalness:.22, roughness:1.0,
+    clearcoat:1, clearcoatRoughness:.022,
+    transparent:true, opacity:0, envMapIntensity:1.05
   });
 
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -103,6 +125,7 @@ function boot(){
   const STAGES=[[0,'Assembled'],[.18,'Exploding'],[.42,'Fuel tank'],[.58,'Carbon swap'],[.74,'Reassembled']];
 
   let ready=false, groups=[], tankGroup=null, carbonMesh=null;
+  const twins=[];
   let R0=1, CENTER=new THREE.Vector3(), TANKPT=new THREE.Vector3();
   const _look=new THREE.Vector3();
 
@@ -121,12 +144,12 @@ function boot(){
         if(!o.isMesh) return;
         const m=o.material; if(!m) return;
         const n=(m.name||'').toLowerCase();
-        m.envMap=envMap; m.envMapIntensity=1.15;
+        m.envMapIntensity=0.95;
         if(n.includes('red outdoor paint')){
-          m.color.setHex(0x20252b); m.metalness=.30; m.roughness=.24;
+          m.color.setHex(0x15181c); m.metalness=.30; m.roughness=.26;
           if('clearcoat' in m){ m.clearcoat=1; m.clearcoatRoughness=.06; }
         }else if(n.includes('warm white outdoor paint')){
-          m.color.setHex(0x8e969f); m.metalness=.25; m.roughness=.3;
+          m.color.setHex(0x6b737c); m.metalness=.25; m.roughness=.32;
         }else if(n.includes('tyre rubber')){ m.color.setHex(0x0d0f12); m.roughness=.95; }
         else if(n.includes('saddle leather')){ m.color.setHex(0x14171b); m.roughness=.82; }
         m.needsUpdate=true;
@@ -157,31 +180,50 @@ function boot(){
 
       tankGroup=buckets.tank;
 
-      /* carbon twin of the tank shell */
-      /* names are underscore-sanitised by three.js - normalise here too,
-         or the hero mesh is never found and no carbon twin is ever made */
-      const tankMesh=[];
-      tankGroup.traverse(o=>{
-        if(o.isMesh && /fuel\s*tank/i.test((o.name||'').replace(/_/g,' '))) tankMesh.push(o);
-      });
-      if(tankMesh.length){
-        const src=tankMesh[0];
-        carbonMesh=new THREE.Mesh(boxProjectUV(src.geometry, TOW_TILE), carbonMat);
-        /* Share the source's PARENT and copy its LOCAL transform. Setting a
-           world transform then calling attach() depends on a matrixWorld that
-           has not been computed yet, which silently parked the twin elsewhere. */
-        carbonMesh.position.copy(src.position);
-        carbonMesh.quaternion.copy(src.quaternion);
-        carbonMesh.scale.copy(src.scale).multiplyScalar(1.004);
-        src.parent.add(carbonMesh);
-        carbonMesh.userData.src=src;
+      /* Carbon twins for EVERY part LAMINA makes, not just the tank: the whole
+         point is that the bike goes back together in carbon. One shared
+         material means a single opacity drives the entire swap. */
+      const isTank = o => /fuel\s*tank/i.test((o.name||'').replace(/_/g,' '));
+      /* A fairing group also contains the things bolted THROUGH it. You cannot
+         lay carbon over a windscreen, a lens, a mirror glass or a bulb socket,
+         so these are excluded from the swap even inside a carbon assembly. */
+      const NO_CARBON = /windscreen|glaz|lens|lamp|bulb|socket|mirror|indicator|instrument|gauge|reflector|grip|saddle|seat pad|tyre|rubber|chrome trim/i;
+      const carbonable = o => {
+        const n=(o.name||'').replace(/_/g,' ');
+        if(NO_CARBON.test(n)) return false;
+        const mn=((o.material&&o.material.name)||'').toLowerCase();
+        if(mn.includes('glazing') || mn.includes('glass') || mn.includes('rubber')) return false;
+        return true;
+      };
+      for(const g of groups){
+        if(!g.userData.carbon) continue;
+        const targets=[];
+        g.traverse(o=>{
+          // skip bolts, clips and stays - twinning those adds cost, not realism
+          if(o.isMesh && o.geometry.attributes.position.count>=90 && carbonable(o)) targets.push(o);
+        });
+        for(const o of targets){
+          const t=new THREE.Mesh(wrapUV(o.geometry, TOW_TILE), carbonMat);
+          /* Share the source's PARENT and copy its LOCAL transform. Setting a
+             world transform then calling attach() depends on a matrixWorld that
+             has not been computed yet, which silently parked the twin elsewhere. */
+          t.position.copy(o.position);
+          t.quaternion.copy(o.quaternion);
+          t.scale.copy(o.scale).multiplyScalar(1.004);
+          t.renderOrder=1;
+          o.parent.add(t);
+          twins.push({twin:t, src:o});
+          if(isTank(o)) carbonMesh=t;
+        }
       }
+      host.dataset.twins=twins.length;
 
       /* hi-vis outline on the parts LAMINA makes */
+      const twinSet=new Set(twins.map(t=>t.twin));
       for(const g of groups){
         if(!g.userData.carbon) continue;
         g.traverse(o=>{
-          if(!o.isMesh || o===carbonMesh) return;
+          if(!o.isMesh || twinSet.has(o)) return;
           const e=new THREE.LineSegments(
             new THREE.EdgesGeometry(o.geometry, 38),
             new THREE.LineBasicMaterial({color:HV, transparent:true, opacity:0, depthWrite:false}));
@@ -229,13 +271,14 @@ function boot(){
       }
     }
     carbonMat.opacity=easeOut(swap);
-    if(carbonMesh && carbonMesh.userData.src) carbonMesh.userData.src.visible = swap < .99;
+    const painted = swap < .99;
+    for(const t of twins) t.src.visible = painted;
 
     const push=ease(focus);
     const radius=THREE.MathUtils.lerp(R0*(1+amt*.26), .32, push);
     const vF=THREE.MathUtils.degToRad(camera.fov);
     const hF=2*Math.atan(Math.tan(vF/2)*camera.aspect);
-    const dist=radius/Math.sin(Math.max(.12,Math.min(vF,hF)/2))*0.94;
+    const dist=radius/Math.sin(Math.max(.12,Math.min(vF,hF)/2))*0.84;
     const spin=(.52+p*1.08)*Math.PI*.5;
     const elev=THREE.MathUtils.lerp(.12,.30,push);
     _look.lerpVectors(CENTER,TANKPT,push);
@@ -291,6 +334,9 @@ function boot(){
     scrollTo({top:host.offsetTop+Math.max(0,span)*p0, behavior:'instant'});
     de.style.scrollBehavior=prev;
     resize(); apply(p0); renderer.render(scene,camera);
+    /* QA-only: expose the graph so stage checks can count real geometry
+       instead of inferring it from screenshots at different camera angles */
+    window.__rig = {scene, camera, groups, twins, apply, render:()=>renderer.render(scene,camera)};
     /* headless --screenshot will not composite a WebGL canvas reliably,
        so hand back the real framebuffer for verification */
     const el=document.createElement('script');

@@ -41,4 +41,8 @@ surface most carbon brands crop out of the photo.
 - `model/sportbike.glb` — CC0 / public domain, original unbranded model, metre scale.
   No attribution required; credited here anyway.
 - `vendor/three.module.js`, `vendor/GLTFLoader.js`, `vendor/BufferGeometryUtils.js` — three.js r169, MIT.
+- `env/studio_1k.hdr` — Poly Haven "photo_studio_01", CC0. Real captured light
+  probe; the reflections on the carbon come from this, not from guesswork.
+- `img/cf-*.jpg` — ambientCG "Fabric004" carbon weave, CC0. Scanned, not drawn:
+  a hand-tiled weave alternates float directions and reads as herringbone.
 - Fonts: Archivo, JetBrains Mono — SIL Open Font License.
