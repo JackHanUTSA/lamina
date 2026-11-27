@@ -124,10 +124,11 @@ function boot(){
   const easeOut=t=>1-Math.pow(1-t,3);
   const STAGES=[[0,'Assembled'],[.18,'Exploding'],[.42,'Fuel tank'],[.58,'Carbon swap'],[.74,'Reassembled']];
 
-  let ready=false, groups=[], tankGroup=null, carbonMesh=null;
+  let ready=false, groups=[], tankGroup=null, carbonMesh=null, tankPivot=null;
   const twins=[];
   let R0=1, CENTER=new THREE.Vector3(), TANKPT=new THREE.Vector3();
-  const _look=new THREE.Vector3();
+  const _look=new THREE.Vector3(), _bmin=new THREE.Vector3(), _bmax=new THREE.Vector3();
+  const _c=new THREE.Vector3(), _t=new THREE.Vector3(), _live=new THREE.Vector3();
 
   function setLabel(t){ if(label && label.textContent!==t) label.textContent=t; }
 
@@ -160,9 +161,10 @@ function boot(){
       for(const g of GROUPS){
         const grp=new THREE.Group(); grp.userData.ex=new THREE.Vector3(...g.ex);
         grp.userData.carbon=!!g.carbon; grp.userData.hero=!!g.hero;
+        grp.userData.order=g.order ?? 0.5;
         buckets[g.key]=grp; scene.add(grp); groups.push(grp);
       }
-      const rest=new THREE.Group(); rest.userData.ex=new THREE.Vector3(0,0,0);
+      const rest=new THREE.Group(); rest.userData.ex=new THREE.Vector3(0,0,0); rest.userData.order=1;
       scene.add(rest); groups.push(rest);
 
       const meshes=[]; root.traverse(o=>{ if(o.isMesh) meshes.push(o); });
@@ -232,6 +234,21 @@ function boot(){
         });
       }
 
+      /* A fuel tank is bolted at the front and hinges up at the REAR; it does
+         not levitate. Re-parent the tank into a pivot sitting on its front
+         lower edge so the lift is a rotation, the way the real part moves. */
+      scene.updateMatrixWorld(true);
+      {
+        const tb=new THREE.Box3().setFromObject(tankGroup);
+        tankPivot=new THREE.Group();
+        tankPivot.position.set(tb.max.x, tb.min.y, (tb.min.z+tb.max.z)/2);  // +x is front
+        tankGroup.add(tankPivot);
+        tankPivot.updateMatrixWorld(true);
+        for(const kid of [...tankGroup.children]){
+          if(kid!==tankPivot) tankPivot.attach(kid);
+        }
+      }
+
       /* ground the model and frame it */
       const box=new THREE.Box3();
       for(const g of groups) box.expandByObject(g);   // bike only, never lights
@@ -239,7 +256,14 @@ function boot(){
       R0=sph.radius; CENTER.copy(sph.center);
       const tb=new THREE.Box3().setFromObject(tankGroup);
       tb.getCenter(TANKPT);
-      for(const g of groups) g.userData.home=g.position.clone();
+      for(const g of groups){
+        g.userData.home=g.position.clone();
+        const gb=new THREE.Box3().setFromObject(g);
+        if(gb.isEmpty()){ g.userData.sr=0; continue; }
+        const gs=gb.getBoundingSphere(new THREE.Sphere());
+        g.userData.sc=gs.center.clone().sub(g.position);  // offset from group origin
+        g.userData.sr=gs.radius;
+      }
 
       scene.add(contactShadow(box.max.x-box.min.x, 0.9));
 
@@ -256,32 +280,64 @@ function boot(){
   /* ---------- timeline ---------- */
   function apply(p){
     if(!ready) return;
-    const out=seg(p,.18,.42), back=seg(p,.74,1), amt=easeOut(out)*(1-easeOut(back));
+    const out=seg(p,.18,.42), back=seg(p,.74,1);
+    /* Panels leave in real service order and return in the exact reverse
+       (tail first, windscreen last) instead of all moving at once. */
+    const STAG=0.55;
+    const win=(prog,o)=>clamp((prog-o*STAG)/(1-STAG),0,1);
+    const amt=easeOut(out)*(1-easeOut(back));
     const focus=seg(p,.42,.58)*(1-seg(p,.74,.88));
     const swap=seg(p,.58,.74);
 
     for(const g of groups){
       const ex=g.userData.ex, home=g.userData.home;
       if(!home) continue;
-      const k=(g===tankGroup)? amt*.22 : amt;      // tank holds; the camera travels
+      const o=g.userData.order ?? 0.5;
+      const k=easeOut(win(out,o))*(1-easeOut(win(back,1-o)));
       g.position.set(home.x+ex.x*k, home.y+ex.y*k, home.z+ex.z*k);
       if(g.userData.edges){
         const o=(g===tankGroup)? (.16+swap*.70) : (.07+amt*.26);
         for(const mat of g.userData.edges) mat.opacity=o;
       }
     }
+    if(tankPivot){
+      const to=tankGroup.userData.order ?? .4;
+      const tk=easeOut(win(out,to))*(1-easeOut(win(back,1-to)));
+      tankPivot.rotation.z = -0.52*tk;            // negative lifts the rear
+    }
     carbonMat.opacity=easeOut(swap);
     const painted = swap < .99;
     for(const t of twins) t.src.visible = painted;
 
+    /* Staggered panels travel further than any single guessed radius, so they
+       were flying out of shot. Enclose the assemblies where they actually are. */
+    const bmin=_bmin.set(Infinity,Infinity,Infinity), bmax=_bmax.set(-Infinity,-Infinity,-Infinity);
+    for(const g of groups){
+      if(!g.userData.sr) continue;
+      const c=_c.copy(g.userData.sc).add(g.position), r=g.userData.sr;
+      bmin.min(_t.set(c.x-r,c.y-r,c.z-r));
+      bmax.max(_t.set(c.x+r,c.y+r,c.z+r));
+    }
+    const live=_live.addVectors(bmin,bmax).multiplyScalar(0.5);
+    let liveR=0;
+    for(const g of groups){
+      if(!g.userData.sr) continue;
+      const c=_c.copy(g.userData.sc).add(g.position);
+      liveR=Math.max(liveR, c.distanceTo(live)+g.userData.sr);
+    }
+    if(!isFinite(liveR) || liveR<=0) liveR=R0;
+
     const push=ease(focus);
-    const radius=THREE.MathUtils.lerp(R0*(1+amt*.26), .32, push);
+    const radius=THREE.MathUtils.lerp(liveR, .32, push);
     const vF=THREE.MathUtils.degToRad(camera.fov);
     const hF=2*Math.atan(Math.tan(vF/2)*camera.aspect);
-    const dist=radius/Math.sin(Math.max(.12,Math.min(vF,hF)/2))*0.84;
+    const dist=radius/Math.sin(Math.max(.12,Math.min(vF,hF)/2))*0.92;
+    if(tankGroup && tankGroup.userData.sr){
+      TANKPT.copy(tankGroup.userData.sc).add(tankGroup.position);
+    }
     const spin=(.52+p*1.08)*Math.PI*.5;
     const elev=THREE.MathUtils.lerp(.12,.30,push);
-    _look.lerpVectors(CENTER,TANKPT,push);
+    _look.lerpVectors(live,TANKPT,push);
     camera.position.set(_look.x+Math.cos(spin)*Math.cos(elev)*dist,
                         _look.y+Math.sin(elev)*dist,
                         _look.z+Math.sin(spin)*Math.cos(elev)*dist);

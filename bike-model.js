@@ -65,47 +65,47 @@ export function contactShadow(width=2.4, depth=0.9){
    recognise, each with a direction to fly in.
    `carbon:true` marks the parts LAMINA actually makes. */
 export const GROUPS = [
-  {key:'tank',    ex:[ 0.00, 0.42, 0.00], carbon:true, hero:true,
+  {key:'tank',    ex:[0.0,0.1,0.0], order:0.40, carbon:true, hero:true,
    test:n=>/fuel tank|tank filler/i.test(n)},
 
-  {key:'noseFwd', ex:[ 0.62, 0.30, 0.00], carbon:true,
+  {key:'noseFwd', ex:[0.7,0.26,0.0], order:0.00, carbon:true,
    test:n=>/nose fairing|optical and fairing|windscreen|windscreen seated|forward lamp|forward amber|indicator|instrument|mirror/i.test(n)},
 
-  {key:'cowlL',   ex:[ 0.00, 0.02, 0.50], carbon:true,
+  {key:'cowlL',   ex:[0.06,0.04,0.46], order:0.10, carbon:true,
    test:n=>/upper sport cowl 1$|sport cowl retained fixing 1|sport cowl seated frame stay 1/i.test(n)},
-  {key:'cowlR',   ex:[ 0.00, 0.02,-0.50], carbon:true,
+  {key:'cowlR',   ex:[0.06,0.04,-0.46], order:0.10, carbon:true,
    test:n=>/upper sport cowl -1$|sport cowl retained fixing -1|sport cowl seated frame stay -1/i.test(n)},
 
-  {key:'bellyL',  ex:[ 0.00,-0.40, 0.34], carbon:true,
+  {key:'bellyL',  ex:[0.0,-0.34,0.38], order:0.20, carbon:true,
    test:n=>/belly cowl 1$|radiator edge fairing bridge 1/i.test(n)},
-  {key:'bellyR',  ex:[ 0.00,-0.40,-0.34], carbon:true,
+  {key:'bellyR',  ex:[0.0,-0.34,-0.38], order:0.20, carbon:true,
    test:n=>/belly cowl -1$|radiator edge fairing bridge -1/i.test(n)},
 
-  {key:'tail',    ex:[-0.60, 0.30, 0.00], carbon:true,
+  {key:'tail',    ex:[-0.66,0.22,0.0], order:0.30, carbon:true,
    test:n=>/rear body cowl|rear lamp|saddle|seat support|seat subframe|seat stay|rear mudguard/i.test(n)},
 
-  {key:'fenderF', ex:[ 0.58, 0.44, 0.00], carbon:true,
+  {key:'fenderF', ex:[0.52,0.46,0.0], order:0.50, carbon:true,
    test:n=>/front mudguard/i.test(n)},
-  {key:'hugger',  ex:[-0.58, 0.40, 0.00], carbon:true,
+  {key:'hugger',  ex:[-0.52,0.42,0.0], order:0.54, carbon:true,
    test:n=>/rear wheel arch/i.test(n)},
 
-  {key:'wheelF',  ex:[ 0.78,-0.04, 0.00],
+  {key:'wheelF',  ex:[0.8,-0.06,0.0], order:0.68,
    test:n=>/^front (rounded tyre|sculpted alloy spoke|turned rim|bearing hub|finite brake rotor|seated brake caliper|caliper carrier|seated through axle|rotor fixing)/i.test(n)},
-  {key:'wheelR',  ex:[-0.80,-0.04, 0.00],
+  {key:'wheelR',  ex:[-0.82,-0.06,0.0], order:0.68,
    test:n=>/^rear (rounded tyre|sculpted alloy spoke|turned rim|bearing hub|finite brake rotor|seated brake caliper|caliper carrier|seated through axle|rotor fixing|machined teeth|sprocket)/i.test(n)},
 
-  {key:'fork',    ex:[ 0.46, 0.52, 0.00],
+  {key:'fork',    ex:[0.4,0.56,0.0], order:0.76,
    test:n=>/fork |steering yoke|steering head|handlebar|rubber grip|control switch|curved lever|brake hose|mirror mounted stem|indicator mounted stalk/i.test(n)},
 
-  {key:'engine',  ex:[ 0.00,-0.62, 0.00],
+  {key:'engine',  ex:[0.0,-0.64,0.0], order:0.92,
    test:n=>/cylinder|crankcase|engine c|engine seated|gearbox|radiator (cooling|matrix|seated|coolant)/i.test(n)},
 
-  {key:'exhaust', ex:[-0.30,-0.46,-0.34],
+  {key:'exhaust', ex:[-0.26,-0.5,-0.36], order:0.60,
    test:n=>/exhaust|silencer/i.test(n)},
 
-  {key:'swing',   ex:[-0.46,-0.30, 0.00],
+  {key:'swing',   ex:[-0.5,-0.26,0.0], order:0.84,
    test:n=>/swing arm|swingarm|drive chain|rear damper|rear spring|spring seated perch|shock |rear sprocket carrier/i.test(n)},
 
-  {key:'frame',   ex:[ 0.00, 0.10, 0.00],
+  {key:'frame',   ex:[0.0,0.08,0.0], order:1.00,
    test:n=>/triangulated frame|footpeg|footrest|side stand|seat support tray/i.test(n)},
 ];
