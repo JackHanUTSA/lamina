@@ -23,6 +23,7 @@
     <b>LAMINA</b>
   </a>
   <ul>
+    <li><a href="#rig">Teardown</a></li>
     <li><a href="#underside">The underside</a></li>
     <li><a href="#film">Film</a></li>
     <li><a href="#parts">Parts</a></li>
@@ -84,6 +85,25 @@
       <div class="stat rv"><b><span class="n" data-count="0">0</span></b><span>Centreline splices</span></div>
       <div class="stat rv"><b><span class="n" data-count="100">0</span><span class="u">%</span></b><span>Hand laid</span></div>
     </div>
+  </div>
+</section>
+
+
+<!-- ───────────── 3D EXPLODED VIEW ───────────── -->
+<section class="rig" id="rig" aria-labelledby="rig-h">
+  <div class="rig__sticky">
+    <canvas id="rig-canvas" aria-hidden="true"></canvas>
+    <div class="rig__title">
+      <p class="eyebrow">Scroll to strip it</p>
+      <h2 id="rig-h">One part changes,<br>the whole bike reads differently.</h2>
+      <p>A schematic sport bike — drawn in code, not scanned. Scroll to pull it apart,
+         find the tank cover, and watch painted plastic become hand-laid twill.</p>
+    </div>
+    <div class="rig__hud">
+      <span class="rig__stage" id="rig-label">Assembled</span>
+      <span class="rig__bar" id="rig-stage"></span>
+    </div>
+    <span class="rig__hint">↓ scroll</span>
   </div>
 </section>
 
@@ -348,5 +368,6 @@
   }
 })();
 </script>
+<script type="module" src="bike.js"></script>
 </body>
 </html>

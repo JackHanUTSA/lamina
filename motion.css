@@ -182,3 +182,54 @@ body::after{
   .progress{display:none}
   body::after{display:none}
 }
+
+
+/* ─────────── 3D exploded-view rig ─────────── */
+.rig{position:relative;height:auto;background:var(--carbon)}
+.rig--ready{height:420vh}
+.rig__sticky{
+  position:relative;height:auto;min-height:60vh;display:grid;place-items:center;overflow:hidden;
+  padding-block:var(--s6);
+}
+.rig--ready .rig__sticky{position:sticky;top:0;height:100vh;padding-block:0}
+.rig canvas{width:100%;height:100%;display:block}
+.rig:not(.rig--ready) canvas{display:none}
+.rig__hud{
+  position:absolute;left:var(--gut);bottom:var(--s5);z-index:3;pointer-events:none;
+  display:flex;flex-direction:column;gap:10px;
+}
+.rig__stage{
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--hv);
+}
+.rig__bar{width:min(300px,46vw);height:2px;background:var(--line);position:relative}
+.rig__bar::after{
+  content:"";position:absolute;inset:0 auto 0 0;width:var(--sp,0%);background:var(--hv);
+  box-shadow:0 0 10px var(--hv-glow);
+}
+.rig__title{
+  position:absolute;top:calc(var(--s7) * .72);left:var(--gut);right:var(--gut);z-index:3;
+  pointer-events:none;max-width:560px;
+}
+.rig__title h2{margin:0 0 10px;font-size:clamp(30px,4.6vw,56px);font-weight:800;line-height:1.02;letter-spacing:-.03em}
+.rig__title p{margin:0;color:var(--tow);font-size:15.5px;max-width:42ch}
+.rig__hint{
+  position:absolute;right:var(--gut);bottom:var(--s5);z-index:3;pointer-events:none;
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+}
+/* if WebGL is unavailable the whole section collapses rather than
+   leaving a blank 420vh hole in the page */
+.rig--failed{height:auto}
+.rig--failed .rig__sticky{height:auto;padding-block:var(--s6)}
+.rig--failed canvas{display:none}
+.rig--failed .rig__hud,.rig--failed .rig__hint{display:none}
+.rig--failed .rig__title{position:static;max-width:none;text-align:center}
+@media (prefers-reduced-motion:reduce){
+  .rig--ready{height:auto}
+  .rig__sticky{height:auto;min-height:72vh}
+  .rig__hint{display:none}
+}
+@media(max-width:760px){
+  .rig--ready{height:360vh}
+  .rig__title{top:calc(var(--s7) * .5)}
+}
