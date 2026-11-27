@@ -15,6 +15,8 @@ a wet lay-up tank cover — photographed as it actually is.
 | `fonts/` | self-hosted Archivo — OFL licensed |
 | `brand/BRAND.md` | positioning, palette, type, part-code scheme |
 | `brand/assets/` | logo marks (SVG + PNG 32-1024px), twill pattern |
+    | `model/sportbike.glb` | donor sport bike, CC0 public domain, unbranded, 599 named parts |
+    | `bike.js` / `bike-model.js` | scroll-scrubbed teardown rig (three.js r169, vendored, MIT) |
 
 ## Deploy
 
@@ -33,3 +35,10 @@ surface most carbon brands crop out of the photo.
 - Wordmark is set type, not drawn letterforms
 - Gold accent untested against real gloss clearcoat in sunlight
 - Part code `LMN-R6-TNK-2T-G` assumes R6 fitment — unverified
+
+## Third-party assets
+
+- `model/sportbike.glb` — CC0 / public domain, original unbranded model, metre scale.
+  No attribution required; credited here anyway.
+- `vendor/three.module.js`, `vendor/GLTFLoader.js`, `vendor/BufferGeometryUtils.js` — three.js r169, MIT.
+- Fonts: Archivo, JetBrains Mono — SIL Open Font License.
