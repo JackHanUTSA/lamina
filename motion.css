@@ -5,10 +5,9 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root{
-  --hv:#D7FF2E;            /* hi-vis — energy, UI, speed */
-  --hv-dim:#9FBF1F;
-  --hv-glow:rgba(215,255,46,.26);
-  /* gold is now MATERIAL-ONLY: the aramid, the etched code. Never beside --hv */
+  --hv:#C8A94B;   /* page chrome speaks ONE accent, once: aramid gold */
+  --hv-dim:#8A7430;
+  --hv-glow:rgba(200,169,75,.26);
   --ease-out:cubic-bezier(.16,1,.3,1);
   --ease-rush:cubic-bezier(.22,1.2,.36,1);
 }
@@ -233,3 +232,9 @@ body::after{
   .rig--ready{height:360vh}
   .rig__title{top:calc(var(--s7) * .5)}
 }
+
+
+/* The acid green survives in exactly one place: inside the 3D teardown, where
+   it is not decoration but a label - it marks the parts LAMINA actually makes.
+   Everywhere else the chromatic budget is spent on gold, once. */
+.rig{--hv:#D7FF2E;--hv-dim:#9FBF1F;--hv-glow:rgba(215,255,46,.26)}

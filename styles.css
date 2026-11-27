@@ -56,7 +56,12 @@ a{color:inherit;text-decoration:none}
   background:rgba(10,11,13,.72);backdrop-filter:blur(14px);
   border-bottom:1px solid transparent;transition:border-color .3s,background .3s;
 }
-.nav.stuck{border-bottom-color:var(--line);background:rgba(10,11,13,.92)}
+.nav.stuck{border-bottom-color:var(--line)}
+/* Apple's signature: the bar never goes opaque, it stays translucent glass so
+   content is visibly travelling underneath it. */
+
+.nav{background:rgba(10,11,13,.84);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+@supports not (backdrop-filter:blur(1px)){ .nav{background:rgba(10,11,13,.94)} }
 .brand{display:flex;align-items:center;gap:12px}
 .brand img{width:26px;height:26px}
 .brand b{font-weight:800;letter-spacing:.30em;font-size:15px;padding-left:2px}
@@ -233,3 +238,21 @@ footer{border-top:1px solid var(--line);padding-block:var(--s5) var(--s4);backgr
 
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
 ::selection{background:var(--gold);color:#0A0B0D}
+
+
+/* ───────────── SHEET: the light scene ─────────────
+   Apple alternates black with #f5f5f7 so each section reads as a new scene and
+   the informational moments feel open rather than another dark slab. Ours is
+   warmed a touch so it sits beside carbon rather than glaring against it. */
+.sheet{
+  --clear:#15181C; --tow:#51575F; --dim:#6E747C;
+  --line:#D9DCE0; --line-soft:#E6E8EB; --panel:#FFFFFF;
+  background:#F1F2F4; color:#15181C;
+}
+.sheet .eyebrow{color:#6E747C}
+.sheet h2,.sheet h3,.sheet h4{color:#0A0B0D}
+.sheet .step{background:#fff;border-color:#E2E5E9}
+.sheet .sec-head::before{color:#B9BEC5}
+.sheet .num,.sheet .stat b{color:#0A0B0D}
+.sheet a{color:#8A7430}
+.sheet .rule,.sheet hr{border-color:#DFE2E6}
