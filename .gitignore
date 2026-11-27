@@ -1,0 +1,7 @@
+_*
+*.tmp
+.DS_Store
+._*
+shot_*.png
+_frames/
+_vt/
