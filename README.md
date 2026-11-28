@@ -18,6 +18,14 @@ a wet lay-up tank cover — photographed as it actually is.
     | `model/sportbike.glb` | donor sport bike, CC0 public domain, unbranded, 599 named parts |
     | `bike.js` / `bike-model.js` | scroll-scrubbed teardown rig (three.js r169, vendored, MIT) |
 
+## Photo-guided tank-cover model
+
+`cover.html` provides an interactive orbit viewer with top, underside and three-quarter presets, photo/studio materials, and GLB/OBJ downloads. `tools/build_cover.py` reproduces the mesh with Python, NumPy and Pillow.
+
+The exterior silhouette and opening are manually traced from `img/tank-top.jpg`; `img/tank-under.jpg` is a qualitative reference for the open shell. It is not an AI scan or photogrammetric reconstruction. Depth, curvature, thickness, hidden details and perspective correction are estimated. Coordinate scale is normalized and **not measured**. Do not use this mesh for manufacturing, fitment or structural analysis. The source image already contains edited lighting and a brand overlay; photo mode retains those pixels and baked reflections. Studio mode is illustrative, not a measured material reconstruction.
+
+Outputs: `model/tank-cover-photo.glb`, `model/tank-cover-photo.obj`, `model/tank-cover-validation.json`. Build checks include finite coordinates, nondegenerate triangles, two-face edge incidence and consistent winding. `vendor/OrbitControls.js` and `vendor/RGBELoader.js` are Three.js r169, MIT.
+
 ## Deploy
 
 Static files. Any host works. For GitHub Pages: Settings -> Pages ->

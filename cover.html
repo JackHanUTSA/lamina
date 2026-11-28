@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LAMINA — Your tank cover in 3D</title>
+<meta name="description" content="A photo-guided, rotatable visualization of the LAMINA tank cover. An unmeasured visual approximation, not production CAD.">
+<meta name="theme-color" content="#0A0B0D">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="cover.css">
+</head>
+<body class="cover-page">
+<nav class="cover-nav" aria-label="Product viewer"><a class="brand" href="./"><img src="img/mark.svg" width="28" height="28" alt=""><b>LAMINA</b></a><a href="./">Back to the bike <span aria-hidden="true">↗</span></a></nav>
+<main>
+<header class="cover-heading"><h1>Your cover.<br>Every angle.</h1><p>A three-dimensional study built around your photographs.<br>Turn it over. Look through the opening. Explore the shell.</p></header>
+<div class="cover-layout">
+<section class="cover-stage" aria-label="Interactive tank-cover model">
+<img class="cover-fallback" src="img/tank-top.jpg" alt="Source photograph of the carbon tank cover">
+<canvas id="cover-canvas" aria-label="Rotatable tank cover. Drag to orbit, scroll or pinch to zoom."></canvas>
+<span class="cover-state" id="cover-state" role="status">Loading your shell…</span>
+<span class="cover-gesture">Drag to turn · pinch or scroll to zoom</span>
+</section>
+<aside class="cover-details">
+<h2>From the actual part.<br>Not the donor bike.</h2>
+<p>The outer outline and filler opening are traced from your top photograph. The underside photo informs the open-shell construction.</p>
+<div class="cover-controls" aria-label="Camera views">
+<button type="button" data-view="angle" aria-pressed="true">Three-quarter</button><button type="button" data-view="top" aria-pressed="false">Top</button><button type="button" data-view="under" aria-pressed="false">Underside</button><button type="button" id="cover-spin" aria-pressed="false">Rotate slowly</button>
+</div>
+<fieldset class="cover-material"><legend>Surface</legend><label><input type="radio" name="surface" value="photo" checked> Your photo</label><label><input type="radio" name="surface" value="studio"> Studio carbon</label></fieldset>
+<p class="cover-note">Photo mode retains the lighting and reflections in the original image. Studio mode uses an illustrative carbon material so you can judge the form.</p>
+<div class="cover-downloads"><a class="btn btn-primary" href="model/tank-cover-photo.glb" download>Download GLB</a><a href="model/tank-cover-photo.obj" download>Geometry only · OBJ</a></div>
+<div class="cover-limits"><h3>A visualization, not a scan.</h3><p>Depth, curvature, shell thickness and hidden details are estimated. The photos are not calibrated and no physical dimensions were supplied. This model is not suitable for manufacturing, fitment checks or structural analysis.</p></div>
+</aside>
+</div>
+<section class="cover-references" aria-labelledby="source-h"><div><h2 id="source-h">The photographs behind the form.</h2><p>Two views, one physical part. Visible edges guide this reconstruction; unseen geometry remains an estimate.</p></div><figure><img loading="lazy" src="img/tank-top.jpg" alt="Exterior reference photograph"><figcaption>Exterior · silhouette and filler opening</figcaption></figure><figure><img loading="lazy" src="img/tank-under.jpg" alt="Underside reference photograph"><figcaption>Underside · open-backed shell and flange</figcaption></figure></section>
+</main>
+<footer class="cover-footer">LAMINA · Counted in plies <a href="./">Return to website</a></footer>
+<script type="module" src="cover.js"></script>
+</body></html>

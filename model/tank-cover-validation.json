@@ -1,0 +1,12 @@
+{
+  "vertices": 18816,
+  "triangles": 37632,
+  "nonManifoldEdges": 0,
+  "degenerateTriangles": 0,
+  "glbBytes": 1263700,
+  "scale": "unmeasured",
+  "references": [
+    "img/tank-top.jpg",
+    "img/tank-under.jpg"
+  ]
+}
